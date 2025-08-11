@@ -1,0 +1,24 @@
+{
+  "name": "node",
+  "version": "1.0.0",
+  "description": "Welcome to my personal repository for learning and practicing **Backend Development**!  \r I created this repo to:\r - Keep my learning progress organized\r - Store notes, resources, and practice files in one place\r - Document my journey for future reference",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/RishabhKumarDev/Back-End-Playground.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/RishabhKumarDev/Back-End-Playground/issues"
+  },
+  "homepage": "https://github.com/RishabhKumarDev/Back-End-Playground#readme",
+  "dependencies": {
+    "ejs": "^3.1.10",
+    "express": "^5.1.0"
+  }
+}
