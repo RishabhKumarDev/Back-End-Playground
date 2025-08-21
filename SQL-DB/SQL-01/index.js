@@ -1,7 +1,12 @@
 const { faker } = require("@faker-js/faker");
 const mysql = require("mysql2/promise");
+const express = require("express");
+const app = express();
+const path = require("path");
 
-// Create the connection to database
+app.set("view engine", "ejs");
+app.set("views", path.join(__dirname, "/views"));
+
 (async () => {
   const connection = await mysql.createConnection({
     host: "localhost",
@@ -10,35 +15,20 @@ const mysql = require("mysql2/promise");
     password: "3EvdK%yR05$",
   });
 
-  const q = "INSERT INTO user(id,username, email, password) VALUES ?";
-  // insearting one value (?,?,?,?);
-  //   const values = ["001", "001_hibkl", "haahoo@gmail.com", "123456n"];
+  app.get("/", async (req, res) => {
+    try {
+      const q = "SELECT count(*) FROM user";
+      const [result] = await connection.query(q);
+      const count = result[0]["count(*)"];
 
-  // inserting multiple values
-  // const users = [
-  //   ["002", "001_hibklb", "haahoob@gmail.com", "123456nb"],
-  //   ["003", "001_hibklc", "haahooc@gmail.com", "123456nc"],
-  //   ["004", "001_hibkld", "haahood@gmail.com", "123456nd"],
-  // ];
+      res.render("home.ejs");
+    } catch (error) {
+      console.log("some error", error);
+      res.send("got some error in the db", error);
+    }
+  });
 
-  // inserting bulk data at once;
-
-  const data = [];
-  for (let i = 1; i <= 100; i++) {
-    data.push(getRandomUser());
-  }
- console.log(data);
-
-  try {
-    const [result] = await connection.query(q, [data]);
-    
-
-    console.log(result);
-  } catch (error) {
-    console.log(error, "eroor on the sql query");
-  }
-
-  connection.end();
+  // connection.end();
 })();
 
 const getRandomUser = () => {
@@ -49,3 +39,7 @@ const getRandomUser = () => {
     faker.internet.password(),
   ];
 };
+
+app.listen("8080", () => {
+  console.log("app is listening to port 8080");
+});
