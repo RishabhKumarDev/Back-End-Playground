@@ -14,9 +14,10 @@ app.get("/register", (req, res) => {
 });
 
 app.post("/register", (req, res) => {
-  
-    let {user, password} = req.body;
-  res.send(`Standard POST request; your name is :${user} and password is:${password}`);
+  let { user, password } = req.body;
+  res.send(
+    `Standard POST request; your name is :${user} and password is:${password}`
+  );
 });
 
 app.listen(port, (req, res) => {
