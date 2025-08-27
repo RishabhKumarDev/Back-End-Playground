@@ -1,0 +1,34 @@
+.chat{
+    background-color: rgb(100, 100, 166);
+    padding: 16px;
+    display: inline-block;
+    border-radius: 16px;
+    margin: 10px;
+}
+.msg{
+    background-color: dodgerblue;
+    border-radius: 16px;
+    padding: 12px;
+}
+.btn{
+    background-color: rgb(26, 93, 181);
+    color: white;
+    border-radius: 8px;
+    padding: 10px;
+    border: 2px solid black;
+    cursor: pointer;
+    font-weight: 700;
+    
+}
+.btns{
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+.dlt{
+    background-color: rgb(156, 38, 38);
+}
+
+.edit{
+    background-color: rgb(19, 149, 19);
+}
