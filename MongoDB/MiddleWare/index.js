@@ -51,6 +51,11 @@ app.get("/random", (req, res) => {
   res.send("I am just random");
 });
 
+// activity (Admin route)
+app.get("/admin",(req,res)=>{
+  throw new ExpressError(403, "You are not admin")
+})
+
 // creating error
 app.get("/err", (req, res) => {
   abcd = abcd;
@@ -70,10 +75,10 @@ app.use((err, req, res, next) => {
   // next(err);
 });
 
-// app.use((err, req, res, next) => {
-//   console.log("---------Error 3----------");
-//   next(err);
-// });
+app.use((err, req, res, next) => {
+  console.log("---------Error 3----------");
+  next(err);
+});
 
 // page not found middleware;
 app.use((req, res) => {
