@@ -4,11 +4,12 @@ const path = require("path");
 const mongoose = require("mongoose");
 const Chat = require("./models/chat.js");
 const methodOverride = require("method-override");
+const ExpressError = require("./ExpressError.js");
 
 // connecting to MongoDB.
 (async () => {
   try {
-    await mongoose.connect("mongodb://127.0.0.1:27017/whatsapp");
+    await mongoose.connect("mongodb://127.0.0.1:27017/fakewhatsapp");
     console.log("succesful connection ---- mongoose/mongoDB");
   } catch (error) {
     console.log(error);
@@ -28,6 +29,11 @@ let chat1 = new Chat({
 //   console.log(chat);
 // })();
 
+// Async Wrapper;
+const asyncWrapper = (fn) => (req, res, next) => {
+  fn(req, res).catch(next);
+};
+
 // setting for express.
 app.set("views", path.join(__dirname, "views"));
 app.set("view engine", "ejs");
@@ -43,58 +49,92 @@ app.get("/", (req, res) => {
 });
 
 // Index Route -- to Show all chats;
-app.get("/chats", async (req, res) => {
-  const allChats = await Chat.find({});
-  // console.log(allChats);
-  res.render("index.ejs", { allChats });
-});
+app.get(
+  "/chats",
+  asyncWrapper(async (req, res) => {
+    const allChats = await Chat.find({});
+    // console.log(allChats);
+    res.render("index.ejs", { allChats });
+  })
+);
 
 // creating a new chat and saving in the DB.
 
 // get request to render form--
 app.get("/chats/new", (req, res) => {
+  // throw new ExpressError(404, "Page Not Found");
   res.render("newChat.ejs");
 });
 
+// new Routes(for FakewhatsApp DB )for understanding async Error Handling
+
+app.get(
+  "/chats/:id",
+  asyncWrapper(async (req, res) => {
+    let { id } = req.params;
+    let chat = await Chat.findById(id);
+    // if (!chat) throw new ExpressError(404, "Chat not Found");
+    res.render("show.ejs", { chat });
+  })
+);
+
 // post req -- to save chat in DB
-app.post("/chats", async (req, res) => {
-  let { from, msg, to } = req.body;
-  console.log(from, msg, to);
-  let newChat = { from, msg, to };
-  let chat = await new Chat(newChat).save();
-  console.log(chat);
-  res.redirect("/chats");
-});
+app.post(
+  "/chats",
+  asyncWrapper(async (req, res) => {
+    let { from, msg, to } = req.body;
+    console.log(from, msg, to);
+    let newChat = { from, msg, to };
+    let chat = await new Chat(newChat).save();
+    console.log(chat);
+    res.redirect("/chats");
+  })
+);
 
 // update Messages
 // get route for form--
-app.get("/chats/:id/edit", async (req, res) => {
-  let { id } = req.params;
-  let chat = await Chat.findById(id);
-  // console.log(chat);
-  res.render("edit.ejs", { chat });
-});
+app.get(
+  "/chats/:id/edit",
+  asyncWrapper(async (req, res) => {
+    let { id } = req.params;
+    let chat = await Chat.findById(id);
+    // console.log(chat);
+    res.render("edit.ejs", { chat });
+  })
+);
 
 // put request -- updte Db
-app.put("/chats/:id", async (req, res) => {
-  let { id } = req.params;
-  let { newMsg } = req.body;
+app.put(
+  "/chats/:id",
+  asyncWrapper(async (req, res) => {
+    let { id } = req.params;
+    let { newMsg } = req.body;
 
-  let updatedChat = await Chat.findByIdAndUpdate(
-    id,
-    { $set: { msg: newMsg } },
-    { runValidators: true, new: true }
-  );
-  console.log("updated chat", updatedChat);
-  res.redirect("/chats");
-});
+    let updatedChat = await Chat.findByIdAndUpdate(
+      id,
+      { $set: { msg: newMsg } },
+      { runValidators: true, new: true }
+    );
+    console.log("updated chat", updatedChat);
+    res.redirect("/chats");
+  })
+);
 
 // delete chat;
 // delet req
-app.delete("/chats/:id", async (req, res) => {
-  let { id } = req.params;
-  let deletedChat = await Chat.findByIdAndDelete(id);
-  res.redirect("/chats");
+app.delete(
+  "/chats/:id",
+  asyncWrapper(async (req, res) => {
+    let { id } = req.params;
+    let deletedChat = await Chat.findByIdAndDelete(id);
+    res.redirect("/chats");
+  })
+);
+
+// Error Handling Middleware
+app.use((err, req, res, next) => {
+  let { status = 490, message = "some thing went wrong" } = err;
+  res.status(status).send(message);
 });
 
 app.listen("8080", () => {

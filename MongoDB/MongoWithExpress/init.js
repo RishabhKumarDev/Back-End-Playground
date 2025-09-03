@@ -3,7 +3,7 @@ const Chat = require("./models/chat.js");
 
 (async () => {
   try {
-    await mongoose.connect("mongodb://127.0.0.1:27017/whatsapp");
+    await mongoose.connect("mongodb://127.0.0.1:27017/fakewhatsapp");
     console.log("succesful connection ---- mongoose/mongoDB");
   } catch (error) {
     console.log(error);
