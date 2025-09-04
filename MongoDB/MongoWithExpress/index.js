@@ -131,6 +131,21 @@ app.delete(
   })
 );
 
+const handleTypeError = (err) => {
+  // here we can use the err to access all the needed info and log or do something with them then return the same err for next to use;
+  console.log("this was a TypeError, Please pass right type of data");
+  console.log(err)
+  return err;
+};
+
+app.use((err, req, res, next) => {
+  console.log(err.name);
+  if ((err.name = "TypeError")) {
+    err = handleTypeError(err);
+  }
+  next(err);
+});
+
 // Error Handling Middleware
 app.use((err, req, res, next) => {
   let { status = 490, message = "some thing went wrong" } = err;
